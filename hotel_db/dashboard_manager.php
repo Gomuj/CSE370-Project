@@ -1,5 +1,4 @@
 <?php
-// dashboard_manager.php
 include 'dbconnect.php';
 session_start();
 if ($_SESSION['role'] != 'manager') die('Access denied.');
@@ -27,31 +26,50 @@ $totalResult = $conn->query("SELECT SUM(amount) as total_received FROM payments 
 $totalRow = $totalResult->fetch_assoc();
 $totalReceived = $totalRow['total_received'] ?? 0;
 ?>
-<h2>Manager Dashboard</h2>
-<ul>
-  <li><a href="add_room.php">Add Room</a></li>
-  <li><a href="confirm_payment.php">Confirm Payments</a></li>
-</ul>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manager Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
 
-<p><strong>Total Amount Received:</strong> $<?= number_format($totalReceived, 2) ?></p>
+  <h1>Welcome, Manager <?= htmlspecialchars($_SESSION['user_fname']) ?></h1>
+  <h2>Manager Dashboard</h2>
 
-<h3>Room Booking Calendar</h3>
-<table border=1>
-  <tr>
-    <th>Room</th>
-    <?php for ($i = 0; $i < 7; $i++): ?>
-      <th><?= date('m-d', strtotime("+{$i} day")) ?></th>
-    <?php endfor; ?>
-  </tr>
-  <?php while ($room = $rooms->fetch_assoc()): ?>
-  <tr>
-    <td>Room <?= $room['room_number'] ?></td>
-    <?php for ($i = 0; $i < 7; $i++): $date = date('Y-m-d', strtotime("+{$i} day")); ?>
-      <td style="text-align: center;"><?= isset($calendar[$room['id']][$date]) ? $calendar[$room['id']][$date] : '...' ?></td>
-    <?php endfor; ?>
-  </tr>
-  <?php endwhile; ?>
-</table>
+  <ul>
+    <li><a href="add_room.php">➕ Add Room</a></li>
+    <li><a href="confirm_payment.php">💰 Confirm Payments</a></li>
+  </ul>
 
-<br/> 
-<form method="post" action="logout.php"><button type="submit">Logout</button></form>
+  <p><strong>Total Amount Received:</strong> $<?= number_format($totalReceived, 2) ?></p>
+
+  <h3>Room Booking Calendar (Next 7 Days)</h3>
+  <table>
+    <tr>
+      <th>Room</th>
+      <?php for ($i = 0; $i < 7; $i++): ?>
+        <th><?= date('m-d', strtotime("+{$i} day")) ?></th>
+      <?php endfor; ?>
+    </tr>
+    <?php while ($room = $rooms->fetch_assoc()): ?>
+    <tr>
+      <td>Room <?= $room['room_number'] ?></td>
+      <?php for ($i = 0; $i < 7; $i++):
+        $date = date('Y-m-d', strtotime("+{$i} day"));
+        $status = $calendar[$room['id']][$date] ?? '...';
+        $color = ($status == 'confirmed') ? '#c6f6d5' : (($status == 'pending') ? '#fefcbf' : '#f8f9fa');
+      ?>
+        <td style="text-align: center; background-color: <?= $color ?>;"><?= $status ?></td>
+      <?php endfor; ?>
+    </tr>
+    <?php endwhile; ?>
+  </table>
+
+  <form method="post" action="logout.php">
+    <button type="submit" class="logout-btn">Logout</button>
+  </form>
+
+</body>
+</html>
