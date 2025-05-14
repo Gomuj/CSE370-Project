@@ -17,6 +17,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <p>Password: <input type="password" name="password"></p>
   <p>First Name: <input name="fname"></p>
   <p>Last Name: <input name="lname"></p>
-  <p><button type="submit">Sign Up</button></p>
+  <p><button type="submit">Register</button></p>
 </form>
 <a href="index.php">Back to Home</a>
