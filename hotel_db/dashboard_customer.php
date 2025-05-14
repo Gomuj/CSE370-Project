@@ -81,7 +81,7 @@ $paid = $conn->query("SELECT b.id, r.room_number, b.check_in_date, b.check_out_d
     </table>
   <?php endif; ?>
 
-  <a href="book_room.php">Book Another Room</a>
+  <a href="book_room1.php">Book Another Room</a>
 
   <form method="post" action="logout.php">
     <button type="submit" class="logout-btn">Logout</button>
